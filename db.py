@@ -36,4 +36,3 @@ def initialize_database():
             conn.close()
 
 # Call the initializer when this file is imported
-initialize_database()
