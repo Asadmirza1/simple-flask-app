@@ -1,57 +1,64 @@
-from flask import Flask, render_template, request, redirect, session, url_for
-from db import get_db_connection
+from flask import Flask, render_template, request, redirect, url_for
+import mysql.connector
+from config import db_config
 import os
 
 app = Flask(__name__)
-app.secret_key = os.environ.get("SECRET_KEY", "secret123")
+
+def get_db():
+    return mysql.connector.connect(**db_config)
 
 @app.route('/')
-def home():
-    if 'username' in session:
-        return render_template("index.html", username=session['username'])
-    return redirect('/login')
+def index():
+    conn = get_db()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM users")
+    users = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return render_template('index.html', users=users)
 
-@app.route('/signup', methods=['GET', 'POST'])
-def signup():
+@app.route('/add', methods=['GET', 'POST'])
+def add():
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-
-        conn = get_db_connection()
+        name = request.form['name']
+        email = request.form['email']
+        conn = get_db()
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO users (username, password) VALUES (%s, %s)", (username, password))
+        cursor.execute("INSERT INTO users (name, email) VALUES (%s, %s)", (name, email))
         conn.commit()
         cursor.close()
         conn.close()
+        return redirect(url_for('index'))
+    return render_template('form.html', action='Add')
 
-        return redirect('/login')
-    return render_template('signup.html')
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
+@app.route('/edit/<int:id>', methods=['GET', 'POST'])
+def edit(id):
+    conn = get_db()
+    cursor = conn.cursor(dictionary=True)
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM users WHERE username=%s AND password=%s", (username, password))
-        user = cursor.fetchone()
+        name = request.form['name']
+        email = request.form['email']
+        cursor.execute("UPDATE users SET name=%s, email=%s WHERE id=%s", (name, email, id))
+        conn.commit()
         cursor.close()
         conn.close()
+        return redirect(url_for('index'))
+    cursor.execute("SELECT * FROM users WHERE id=%s", (id,))
+    user = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    return render_template('form.html', user=user, action='Edit')
 
-        if user:
-            session['username'] = username
-            return redirect('/')
-        else:
-            return "Invalid credentials"
-
-    return render_template('login.html')
-
-@app.route('/logout')
-def logout():
-    session.clear()
-    return redirect('/login')
+@app.route('/delete/<int:id>')
+def delete(id):
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM users WHERE id=%s", (id,))
+    conn.commit()
+    cursor.close()
+    conn.close()
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
