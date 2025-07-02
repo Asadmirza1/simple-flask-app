@@ -1,8 +1,14 @@
 <!DOCTYPE html>
-<html>
-<head><title>Home</title></head>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Home</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
 <body>
   <h2>Welcome, {{ username }} 🎉</h2>
   <p><a href="/logout">Logout</a></p>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
