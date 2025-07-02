@@ -1,17 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Railway Flask App</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
+<html>
+<head><title>Home</title></head>
 <body>
-  <div class="container">
-    <h1>🚀 Welcome to Your Railway Flask App!</h1>
-    <p>This app is styled with CSS and powered by Flask.</p>
-    <button onclick="showMessage()">Click Me</button>
-    <p id="message"></p>
-  </div>
-  <script src="{{ url_for('static', filename='script.js') }}"></script>
+  <h2>Welcome, {{ username }} 🎉</h2>
+  <p><a href="/logout">Logout</a></p>
 </body>
 </html>
