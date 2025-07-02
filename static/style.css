@@ -1,12 +1,31 @@
 body {
-  font-family: 'Segoe UI', sans-serif;
+  font-family: sans-serif;
+  background: #e0e0e0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
-.table {
-  border-radius: 8px;
-  overflow: hidden;
+.box {
+  background: white;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 0 20px #aaa;
+  text-align: center;
 }
 
-.btn {
-  margin-right: 5px;
+input {
+  margin: 10px 0;
+  padding: 10px;
+  width: 80%;
+}
+
+button {
+  padding: 10px 20px;
+  background: #007bff;
+  color: white;
+  border: none;
+  margin-top: 10px;
+  cursor: pointer;
 }
